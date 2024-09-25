@@ -1,0 +1,33 @@
+services:
+  web:
+    build:
+      context: ./
+      dockerfile: WeatherAPI_Docker
+    environment:
+      - ConnectionStrings__Db=Server=db;Database=WeatherForcast_035124120245;user id=sa;password=jKRropm5dwp4S9yuSzk3;TrustServerCertificate=true;Integrated Security=false;
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=dev-cert
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certificate/aspnetapp.pfx
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    networks: 
+      - backend
+    depends_on:
+      - db
+
+  db:
+    container_name: mssql-container
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      MSSQL_SA_PASSWORD: "jKRropm5dwp4S9yuSzk3"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    networks: 
+      - backend
+    volumes:
+      - d:/code/WeatherAPI/database:/var/opt/mssql/data
+
+networks: 
+  backend:

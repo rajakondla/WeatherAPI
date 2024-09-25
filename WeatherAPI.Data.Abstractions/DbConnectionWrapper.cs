@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Options;
 
 namespace Collette.Data
 {
@@ -12,12 +14,12 @@ namespace Collette.Data
         private readonly Lazy<IDbConnection> _connection;
         private readonly string _connectionString;
 
-        public DbConnectionWrapper(string connectionString)
+        public DbConnectionWrapper(IOptions<DbConnectionOption> dbOptionsAccessor)
         {
-            _connectionString = connectionString;
+            _connectionString = dbOptionsAccessor.Value.ConnectionString;
 
             _connection = new Lazy<IDbConnection>(() => {
-                var connection = new SqlConnection(connectionString);
+                var connection = new SqlConnection(_connectionString);
 
                 return connection;
             });
@@ -35,6 +37,8 @@ namespace Collette.Data
             var connectionValue = _connection.Value;
             if (connectionValue.State == ConnectionState.Closed)
             {
+                Debug.WriteLine(connectionValue);
+
                 connectionValue.Open();
             }
             return connectionValue;
@@ -70,5 +74,10 @@ namespace Collette.Data
                 _disposedValue = true;
             }
         }
+    }
+
+    public class DbConnectionOption
+    {
+        public string ConnectionString { get; set; } = null!;
     }
 }

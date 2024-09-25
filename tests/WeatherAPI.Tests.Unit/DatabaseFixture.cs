@@ -41,7 +41,7 @@ namespace WeatherAPI.Tests.Unit
 
             var dateTimeStamp = DateTime.Now.ToString("ddmmyyhhffff");
             _testDatabaseName = Configuration.GetSection("TestDbName").Value + "_" + dateTimeStamp;
-            var connStringTemplate = Configuration.GetSection("ConnectionStrings:db").Value;
+            var connStringTemplate = Configuration.GetSection("ConnectionStrings:TestDb").Value;
 
             var currentDirectory = Environment.CurrentDirectory;
             currentDirectory = currentDirectory.Substring(0, currentDirectory.IndexOf(@"\tests\"));
